@@ -8,7 +8,7 @@ import os
 URL = 'https://hypervision.gg/checkout/?prod=1'
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
-CHECK_INTERVAL = 60
+CHECK_INTERVAL = 60  # in secondi
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
 }
@@ -37,11 +37,12 @@ def check_slot():
         return False
 
 def run_bot():
-    notificato = False
+    prev_status = False  # False = no slot, True = slot presente
     while True:
-        if not notificato and check_slot():
+        current_status = check_slot()
+        if current_status and not prev_status:
             send_telegram("✅ SLOT DISPONIBILE SU HYPERVISION! CORRI!")
-            notificato = True
+        prev_status = current_status
         time.sleep(CHECK_INTERVAL)
 
 def start_bot():
