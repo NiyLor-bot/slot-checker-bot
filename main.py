@@ -31,17 +31,19 @@ def check_slot():
     try:
         r = requests.get(URL, headers=HEADERS, timeout=10)
         soup = BeautifulSoup(r.text, 'html.parser')
-        return "No slot left" not in soup.text
+        page_text = soup.text.lower()
+        keywords = ["slot reserved", "remaining", "available"]
+        return any(keyword in page_text for keyword in keywords)
     except Exception as e:
         print(f"Errore durante il controllo: {e}")
         return False
 
 def run_bot():
-    prev_status = False  # False = no slot, True = slot presente
+    prev_status = False
     while True:
         current_status = check_slot()
         if current_status and not prev_status:
-            send_telegram("✅ SLOT DISPONIBILE SU HYPERVISION! CORRI!")
+            send_telegram("✅ SLOT DISPONIBILE SU HYPERVISION! CORRI!\nhttps://hypervision.gg/checkout/?prod=1")
         prev_status = current_status
         time.sleep(CHECK_INTERVAL)
 
